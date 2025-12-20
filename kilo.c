@@ -6,6 +6,10 @@
 #include<stdio.h>
 #include<errno.h>
 
+// defines
+#define CTRL_KEY(k) ((k) & 0x1f)
+
+
 // data
 struct termios orig_termious;
 
@@ -31,8 +35,7 @@ void enableRowMode(){
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
     raw.c_cc[VMIN] = 0;
     raw.c_cc[VTIME] = 1;
-    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termious) == -1) die("tcsetattr");
-    
+    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
 // main
@@ -47,7 +50,7 @@ int main(){
         else{
             printf("%d ('%c')\r\n", c, c);
         }
-        if(c == 'q') break;
+        if(c == CTRL_KEY('q')) break;
 
     }
     return 0;

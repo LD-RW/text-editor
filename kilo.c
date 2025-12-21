@@ -1,4 +1,4 @@
-// includes
+/*** includes ***/
 #include<stdlib.h>
 #include <unistd.h>
 #include<termios.h>
@@ -7,11 +7,11 @@
 #include<errno.h>
 #include<sys/ioctl.h>
 
-// defines
+/*** defines ***/
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 
-// data
+/*** data ***/
 struct editorConfig{
     int screenRows;
     int screenCols;
@@ -21,7 +21,7 @@ struct editorConfig{
 
 struct editorConfig E;
 
-// terminal
+/*** terminal ***/
 void die(const char *s){
     write(STDOUT_FILENO, "\x1b[2J", 4);
     write(STDOUT_FILENO, "\x1b[H", 3);
@@ -91,7 +91,7 @@ int getWindowSize(int *rows, int *cols){
 }
 
 
-// input
+/*** input ***/
 
 void editorProcessKeypress(){
     char c = editorReadKey();
@@ -105,7 +105,7 @@ void editorProcessKeypress(){
 }
 
 
-//output
+/*** output ***/
 
 void editorDrawRows(){
     int y;
@@ -128,7 +128,7 @@ void editorRefreshScreen(){
 
 
 
-// init 
+/*** init ***/
 
 void initEditor(){
     if(getWindowSize(&E.screenRows, &E.screenCols) == -1){

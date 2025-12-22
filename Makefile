@@ -1,2 +1,2 @@
 kilo: kilo.c
-		$(CC) kilo.c -o kilo -Wall -Wextra -pedantic -std=c23
+		$(CC) B-textDitor.c -o B-textEditor -Wall -Wextra -pedantic -std=c23

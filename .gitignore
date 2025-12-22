@@ -1,6 +1,7 @@
 *.out
 *.exe
 *.dell
+*.vscode
 
 kilo
 # Prerequisites

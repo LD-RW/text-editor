@@ -1,2 +1,2 @@
 B-textEditor: B-textEditor.c
-		$(CC) B-textDitor.c -o B-textEditor -Wall -Wextra -pedantic -std=c23
+		$(CC) B-textEditor.c -o B-textEditor -Wall -Wextra -pedantic -std=c23

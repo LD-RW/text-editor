@@ -9,6 +9,7 @@
 #include<string.h>
 /*** defines ***/
 #define CTRL_KEY(k) ((k) & 0x1f)
+#define B_TEXTEDITOR_VERSION "0.0.1"
 
 
 /*** data ***/
@@ -132,7 +133,23 @@ void editorProcessKeypress(){
 void editorDrawRows(struct abuf *ab){
     int y;
     for(y = 0; y < E.screenRows; ++y){
-        abAppend(ab, "~", 1);
+        if(y == E.screenRows / 3){
+            char welcome[80];
+            int welcomeLen = snprintf(welcome, sizeof(welcome), "B-textEditor --Version %s", B_TEXTEDITOR_VERSION);
+            if(welcomeLen > E.screenCols){
+                welcomeLen = E.screenCols;
+            }
+            int padding  = (E.screenCols - welcomeLen) / 2;
+            if(padding){
+                abAppend(ab, "~", 1);
+                padding--;
+            }
+            while(padding--) abAppend(ab, " ", 1);
+            abAppend(ab, welcome, welcomeLen);
+        }
+        else{
+            abAppend(ab, "~", 1);
+        }
         abAppend(ab, "\x1b[K", 3);
         if(y < E.screenRows - 1){
             abAppend(ab, "\r\n", 2);

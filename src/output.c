@@ -108,7 +108,7 @@ void editorDrawRows(struct abuf *ab){
          */
 
         abAppend(ab, "\x1b[K", 3);
-        
+
         /* Only move the cursor down if we are NOT on the very last screen row.
          * Sending \r\n on the final row triggers a terminal scroll-up, 
          * which would ruin the UI alignment. */
@@ -118,20 +118,46 @@ void editorDrawRows(struct abuf *ab){
     }
 }
 
+
+/**
+ * @brief Orchestrates a clean, flicker-free refresh of the terminal display.
+ * * @details This function implements a "Double Buffering" pattern. It collects all 
+ * visual updates—including screen clearing, row rendering, and cursor positioning—into 
+ * a single memory buffer before executing one atomic write to the terminal. This 
+ * eliminates the "stuttering" effect caused by multiple slow system calls.
+ */
 void editorRefreshScreen(){
+    /* Initialize a dynamic append buffer to batch all terminal instructions. */
     struct abuf ab = ABUF_INIT;
 
+    /* 1. HIDE CURSOR: Prevents the user from seeing the cursor "fly" across the 
+          screen as individual rows are drawn (eliminates cursor flickering). */
     abAppend(&ab, "\x1b[?25l", 6);
+
+    /* 2. RESET POSITION: Teleports the "pen" to the Home position (1,1) so the 
+          next frame perfectly overwrites the previous one. */
     abAppend(&ab, "\x1b[H", 3);
-    
+
+    /* 3. RENDER CONTENT: Append all text rows and UI elements to the buffer. */
     editorDrawRows(&ab);
+
+    /* 4. CURSOR TRANSLATION: Prepare the command to place the cursor at the user's
+          logical position. We use a temporary buffer for string formatting. */
     char buf[32];
+    /* Convert 0-indexed C coordinates to 1-indexed terminal coordinates. */
     snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy + 1, E.cx + 1);
+
+    /* Append the specific cursor placement to the batch. We use strlen() because 
+       the length of the command changes based on the number of digits in cx/cy. */
     abAppend(&ab, buf, strlen(buf));
 
+    /* 5. SHOW CURSOR: Reveal the blinking cursor now that the frame is complete. */
     abAppend(&ab, "\x1b[?25h", 6);
 
+    /* 6. ATOMIC UPDATE: Flush the entire frame to the hardware in one system call. */
     write(STDOUT_FILENO, ab.b, ab.len);
+
+    /* 7. CLEANUP: Release the heap memory to prevent memory leaks. */
     abFree(&ab);
 }
 

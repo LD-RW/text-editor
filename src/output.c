@@ -52,38 +52,66 @@ void abAppend(struct abuf *ab, const char *s, int len){
 void abFree(struct abuf *ab){
     free(ab -> b);
 }
-
+/**
+ * @brief Renders each row of the text buffer or the welcome screen to the internal buffer.
+ * @details This function iterates through the terminal's vertical resolution (screenRows).
+ * It handles three distinct states: drawing file content, drawing the centered 
+ * welcome message, or drawing the 'empty' file indicators (~).
+ * * @param ab Pointer to the dynamic append buffer (abuf) used to batch terminal output.
+ */
 void editorDrawRows(struct abuf *ab){
-    int y;
+    int y; /* The current vertical screen row being processed (0-indexed) */
     for(y = 0; y < E.screenRows; ++y){
+        /* CASE 1: DRAWING BEYOND THE FILE END (Empty rows or Welcome message) */
         if(y >= E.numRows) {
-
+            /* Logic for centering the Welcome message on a blank editor */
             if(y == E.screenRows / 3 && E.numRows == 0){
             char welcome[80];
-            int welcomeLen = snprintf(welcome, sizeof(welcome), "B-textEditor --Version %s", B_TEXTEDITOR_VERSION);
+            /* snprintf: Formats the version string safely into the 'welcome' buffer.
+             * Unlike sprintf, it respects the destination size to prevent buffer overflows. */
+            int welcomeLen = snprintf(welcome, sizeof(welcome),
+                                        "B-textEditor --Version %s", B_TEXTEDITOR_VERSION);
+            /* CLIPPING: Ensure text doesn't bleed past the screen width */
             if(welcomeLen > E.screenCols){
                 welcomeLen = E.screenCols;
             }
+            /* CENTERING MATH: Calculate horizontal leading space */
             int padding  = (E.screenCols - welcomeLen) / 2;
+            /** Draw the tilde on the line, and subtract the distance from the middle by 1 */
             if(padding){
-                abAppend(ab, "~", 1);
+                abAppend(ab, "~", 1);   /* Leading Vim-style tilde */
                 padding--;
             }
+            /* Append the calculated spacing to push text to the center */
             while(padding--) abAppend(ab, " ", 1);
             abAppend(ab, welcome, welcomeLen);
             }
             else{
+                /* Regular empty row indicator */
                 abAppend(ab, "~", 1);
             }
         }
+        /* CASE 2: DRAWING ACTUAL FILE CONTENT */
+        else{ 
+            int len = E.row[y].size;                      
 
-        else{
-            int len = E.row[y].size;
-            if(len > E.screenCols) len = E.screenCols;
+            /* CLIPPING: Only draw characters that fit within the horizontal bounds */
+            if(len > E.screenCols) len = E.screenCols; 
             abAppend(ab, E.row[y].chars, len);
         }
+        /**
+         * ANSI EL (Erase In Line) - \x1b[K:
+         * Clears from the current cursor position to the end of the line.
+         * This prevents "ghosting" (leftover characters from the previous frame 
+         * showing up behind shorter lines). We batch these 3 bytes into abuf 
+         * for efficiency rather than clearing the whole screen, which causes flicker.
+         */
 
         abAppend(ab, "\x1b[K", 3);
+        
+        /* Only move the cursor down if we are NOT on the very last screen row.
+         * Sending \r\n on the final row triggers a terminal scroll-up, 
+         * which would ruin the UI alignment. */
         if(y < E.screenRows - 1){
             abAppend(ab, "\r\n", 2);
         }

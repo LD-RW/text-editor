@@ -1,26 +1,43 @@
 #include "common.h"
 #include "data.h"
 #include "prototypes.h"
+/* We use a string buffer so we can write the data in one write statement
+wirte statement is a system call that requires context switching between the current process
+and the OS, but we can copy all the data into one place in the memory using procedure calls
+(memory -> memory copy) and then write all the data in one write statement(system call)
+*/
 struct abuf{
     char *b;
     int len;
 };
-
+/*Intialize the buffer into Null and zero. The first realloc will do the same work as malloc*/
 #define ABUF_INIT {NULL, 0};
 
 void abAppend(struct abuf *ab, const char *s, int len){
+    /*
+    we create a new pointer that reserves a memory block from the end of the current
+    text with length len(the new string length)
+    */
     char *new = realloc(ab -> b, ab -> len + len);
-
+    // We do a saftey check to make sure that if there is no enough space in the ram, end the program
     if(new == NULL) return;
+    /* start the memory -> memory copy operation, the memcpy works as next 
+    memcpy(destenation, source, number of bytes to copy(length))
+    */
     memcpy(&new[ab -> len], s, len);
+    /* We set our actual buffer pointer to our new pointer, and updates the length*/
     ab -> b = new;
     ab -> len += len;
 }
-
+/*When you use malloc (or realloc for a null pointer), the allocator reserves additional 8 or 16 bytes
+called the header right before the pointer you get, that contains metadata (size, Magic number, and status {free, allocated})
+so the free function goes the header and changes the status bit from allocated to free, so the system now can see this
+space of memory available to write */
 void abFree(struct abuf *ab){
     free(ab -> b);
 }
 
+/* This function is responsible about writing the lines to the terminal using the append buffer we created */
 void editorDrawRows(struct abuf *ab){
     int y;
     for(y = 0; y < E.screenRows; ++y){

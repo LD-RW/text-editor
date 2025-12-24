@@ -1,0 +1,15 @@
+B-textEditor/
+├── src/
+│   ├── data.c        (Global data initialization)
+│   ├── file_io.c     (File opening/saving)
+│   ├── input.c       (Key processing)
+│   ├── main.c        (Entry point and loop)
+│   ├── output.c      (Drawing to screen)
+│   ├── row.c         (Row operations)
+│   └── terminal.c    (Raw mode and low-level utils)
+├── include/
+│   ├── common.h      (Standard libraries and defines)
+│   ├── data.h        (Structs and externs)
+│   └── prototypes.h  (Function declarations)
+├── Makefile          (Build script)
+└── README.md

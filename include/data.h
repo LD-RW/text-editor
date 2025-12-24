@@ -3,50 +3,54 @@
 
 #include<termios.h>
 
-/* 
-* A container that holds the data for each line. It contains the starting
-  location of the line in memory and the number of bytes in the line
-  explicitly so the editor doesn't need to scan for the null terminator at the end of the line. 
-* This allows us to use memcpy instead of strcpy(Which stops once it finds '\0'), so that if our
-  line contains a null terminator in the middle (e.g., "Hello \0 World"), or if we forget to put
-  a null terminator at the end of the line, we don't lose data or get stuck in an infinite loop
-  of reading which will crash or program.
-*/
+/**
+ * @struct erow
+ * @brief A container representing a single line of text in the editor.
+ * * Stores the memory address and the explicit byte length of a line.
+ * * @details
+ * - **Binary Safety:** By storing 'size' explicitly, we can handle lines containing 
+ * embedded null bytes (e.g., "Hello \0 World") that would otherwise truncate data.
+ * - **Performance:** Allows the use of memcpy() instead of strcpy(). This avoids 
+ * the O(n) overhead of scanning for a null terminator during every operation.
+ * - **Security:** Prevents infinite loops and program crashes caused by missing 
+ * terminators, effectively mitigating potential buffer overflow vulnerabilities.
+ */
 typedef struct erow{
-    int size;
-    char *chars;
+    int size;           /* Number of bytes in the line */
+    char *chars;        /* Pointer to the character data on the heap */
 } erow;
-/*
-* The brain of our program, a global state that all the files can see and interact with
-* [cx, cy]: Cursor's X and Y coordinates
-* [sreenRows, screenCols]: The current width and hight of the terminal, so the program
-  doesn't try to write out of the edge of the window
-* numRows : The total number of rows in the current opened file
-* *row : A pointer to the beginning of our array of lines
-* orig_termois : The original terminal settings before we open the program, so we can set the 
-  the terminal back to it's settings before the start of our program, because we changed how the
-  terminal works when we entered the raw mode
-
-
-*/
+/**
+ * @struct editorConfig
+ * @brief The "Global State" or central brain of the application.
+ * * This structure acts as a single source of truth, synchronized across all 
+ * source files to maintain the editor's current environment and data.
+ */
 struct editorConfig{
+    /** [cx, cy]: Cursor coordinates. Tracks the user's position within the text buffer. */
     int cx, cy;
+    /** [screenRows, screenCols]: Display dimensions. Used for UI clipping and 
+        ensuring the editor does not render beyond the terminal's visible bounds. */
     int screenRows;
     int screenCols;
+    /** numRows: Total line count of the currently loaded file. */
     int numRows;
+    /** *row: Pointer to the dynamic array of 'erow' structures (the file content). */
     erow *row;
+    /** orig_termios: A snapshot of the terminal's state prior to entering 'Raw Mode.' 
+        Used to restore the user's original environment upon program exit. */
     struct termios orig_termios;
 
 };
-/*
-
-* If you put struct editorConfig E; in both files, the Linker will crash,
-  saying: "Error: Multiple definition of E.", and if you put it only in the 
-  "main.c", the "editor.c" and all other files won't be able to see it
-* The extern tells the C compiler that the variable exists, but it's defined in another file.
-  We used it here so we can define our editorConfig struct in the "data.c" file but include
-  this header in all files so all of them can see the same version of our struct
-*/
+/**
+ * @brief External declaration of the global editor state.
+ * * DESIGN RATIONALE:
+ * - PREVENTING REDEFINITION: Defining 'struct editorConfig E' in a header included 
+ * by multiple .c files would cause a "multiple definition" error at the linking stage.
+ * - GLOBAL VISIBILITY: The 'extern' keyword acts as a promise to the compiler that the 
+ * storage for 'E' is allocated in exactly one translation unit (data.c).
+ * - DATA SYNCHRONIZATION: This allows all program modules (editor.c, terminal.c, etc.) 
+ * to access and modify the same instance of the global state in memory.
+ */
 extern struct editorConfig E;
 
 

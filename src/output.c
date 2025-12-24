@@ -1,43 +1,58 @@
 #include "common.h"
 #include "data.h"
 #include "prototypes.h"
-/* We use a string buffer so we can write the data in one write statement
-wirte statement is a system call that requires context switching between the current process
-and the OS, but we can copy all the data into one place in the memory using procedure calls
-(memory -> memory copy) and then write all the data in one write statement(system call)
-*/
+/**
+ * @struct abuf
+ * @brief A dynamic string buffer for batched terminal output.
+ * * DESIGN RATIONALE:
+ * - SYSTEM CALL REDUCTION: The write() function is a System Call that triggers a 
+ * costly context switch between the User Process and the Kernel. 
+ * - BATCHED I/O: Instead of multiple small writes, we use fast User-Space 
+ * procedure calls (memcpy) to accumulate data in RAM.
+ * - ATOMIC REFRESH: By performing a single write() of the entire buffer, we 
+ * eliminate screen flickering and improve rendering performance.
+ */
 struct abuf{
-    char *b;
-    int len;
+    char *b;        /**< Pointer to the buffer in memory */
+    int len;        /**< Current length of the data in the buffer */
 };
-/*Intialize the buffer into Null and zero. The first realloc will do the same work as malloc*/
-#define ABUF_INIT {NULL, 0};
+/**
+ * @def ABUF_INIT
+ * @brief Initializer for an empty buffer.
+ * Setting .b to NULL ensures the first call to realloc() behaves like malloc().
+ */#define ABUF_INIT {NULL, 0};
 
+
+ /**
+ * @brief Appends a string to the dynamic buffer.
+ * * @param ab Pointer to the abuf structure.
+ * @param s The string to be appended.
+ * @param len The number of bytes to copy from 's'.
+ */
 void abAppend(struct abuf *ab, const char *s, int len){
-    /*
-    we create a new pointer that reserves a memory block from the end of the current
-    text with length len(the new string length)
-    */
+    /* 1. ATTEMPT RESIZE: realloc() tries to expand the existing block or moves 
+          it to a new location in RAM large enough to hold the combined data. */
     char *new = realloc(ab -> b, ab -> len + len);
-    // We do a saftey check to make sure that if there is no enough space in the ram, end the program
+    /* 2. ALLOCATION SAFETY: If realloc returns NULL, the system is out of memory. 
+          We return early to prevent a crash (Segmentation Fault). */    
     if(new == NULL) return;
-    /* start the memory -> memory copy operation, the memcpy works as next 
-    memcpy(destenation, source, number of bytes to copy(length))
-    */
+    /* 3. BATCHED COPY: We copy 's' into the 'newBuffer' block starting exactly 
+          where the previous data ended (&newBuffer[ab -> len]). */
     memcpy(&new[ab -> len], s, len);
-    /* We set our actual buffer pointer to our new pointer, and updates the length*/
+    /* 4. STATE UPDATE: Point the buffer to the new memory address and update length. */    
     ab -> b = new;
     ab -> len += len;
 }
-/*When you use malloc (or realloc for a null pointer), the allocator reserves additional 8 or 16 bytes
-called the header right before the pointer you get, that contains metadata (size, Magic number, and status {free, allocated})
-so the free function goes the header and changes the status bit from allocated to free, so the system now can see this
-space of memory available to write */
+/**
+ * @brief Releases the memory used by the dynamic buffer.
+ * * @details The Heap Manager identifies the block size by reading the hidden 
+ * metadata header (containing size and status) located just before the pointer 
+ * address. Calling free() marks this block as 'available' in the free list.
+ */
 void abFree(struct abuf *ab){
     free(ab -> b);
 }
 
-/* This function is responsible about writing the lines to the terminal using the append buffer we created */
 void editorDrawRows(struct abuf *ab){
     int y;
     for(y = 0; y < E.screenRows; ++y){

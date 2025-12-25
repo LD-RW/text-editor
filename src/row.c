@@ -19,7 +19,7 @@ void editorAppendRow(char *s, size_t len){
      */
     
     void *temp = realloc(E.row, sizeof(erow) * (E.numRows + 1));
-    if(temp == NULL) die(editorAppendRow);
+    if(temp == NULL) die("editorAppendRow");
     E.row = temp;
 
     /* 'at' marks the index of the newly created slot in the directory. */

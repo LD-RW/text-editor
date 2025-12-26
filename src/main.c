@@ -18,6 +18,7 @@ int main(int argc, char *argv[]){
     enableRawMode();
     initEditor();
     if(argc >= 2){
+        /** * Check if the program is openning a file */
         editorOpen(argv[1]);
     }
     while(1){

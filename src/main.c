@@ -2,11 +2,10 @@
 #include "../include/data.h"
 #include "../include/prototypes.h"
 
-
-
 void initEditor(){
     E.cx = 0;
     E.cy = 0;
+    E.rowOff = 0;
     E.numRows = 0;
     E.row = NULL;
     if(getWindowSize(&E.screenRows, &E.screenCols) == -1){
@@ -18,7 +17,6 @@ int main(int argc, char *argv[]){
     enableRawMode();
     initEditor();
     if(argc >= 2){
-        /** * Check if the program is openning a file */
         editorOpen(argv[1]);
     }
     while(1){

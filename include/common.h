@@ -21,6 +21,9 @@
 #include<errno.h>
 #include<sys/ioctl.h>
 #include<string.h>
+#include<time.h>
+#include <stdarg.h>
+
 
 
 /**

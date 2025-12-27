@@ -23,6 +23,7 @@ void editorOpen(char *fileName);
 // void editorDrawRows(struct abuf *ab);
 void editorRefreshScreen();
 void editorScroll();
+void editorSetStatusMessage(const char *fmt, ...);
 // input.c
 void editorMoveCursor(int key);
 void editorProcessKeypress();

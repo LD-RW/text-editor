@@ -10,9 +10,14 @@ void initEditor(){
     E.rx = 0;
     E.numRows = 0;
     E.row = NULL;
+    E.fileName = NULL;
+    E.statusMsg[0] = '\0';
+    E.statusMsgTime = 0;
     if(getWindowSize(&E.screenRows, &E.screenCols) == -1){
         die("getWindowSize");
     }
+    E.screenRows -= 2;
+    
 }
 
 int main(int argc, char *argv[]){
@@ -21,6 +26,9 @@ int main(int argc, char *argv[]){
     if(argc >= 2){
         editorOpen(argv[1]);
     }
+
+    editorSetStatusMessage("HELP: Ctrl-Q = quit");
+
     while(1){
         editorRefreshScreen();
         editorProcessKeypress();

@@ -3,6 +3,8 @@
 #include "../include/prototypes.h"
 
 void editorOpen(char *fileName){
+    free(E.fileName);
+    E.fileName = strdup(fileName);
     FILE *fp = fopen(fileName, "r");
     if (!fp) die("fopen");
 

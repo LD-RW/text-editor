@@ -53,7 +53,9 @@ void editorProcessKeypress(){
             E.cx = 0;
             break;
         case END_KEY:
-            E.cx = E.screenCols - 1;
+            if(E.cy < E.numRows){
+                E.cx = E.row[E.cy].size;
+            }
             break;
         case PAGE_UP:
         case PAGE_DOWN:

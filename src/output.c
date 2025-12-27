@@ -69,13 +69,39 @@ static void editorDrawRows(struct abuf *ab){
         }
 
         abAppend(ab, "\x1b[K", 3);
-        if(y < E.screenRows - 1){
+       
             abAppend(ab, "\r\n", 2);
         }
-    }
+    
 }
 
+void editorDrawStatusBar(struct abuf *ab){
+    abAppend(ab, "\x1b[7m", 4);
+    char status[80], rStatus[80];
+    int len = snprintf(status, sizeof(status), "%.20s - %d lines", 
+        E.fileName ? E.fileName : "[No Name]", E.numRows);
+    int rLen = snprintf(rStatus, sizeof(rStatus), "%d/%d", E.cy + 1, E.numRows);
+    if(len > E.screenCols) len = E.screenCols;
+    abAppend(ab, status, len);
+    while(len < E.screenCols){
+        if(E.screenCols - len == rLen){
+            abAppend(ab, rStatus, rLen);
+            break;
+        }
+        else{
+            abAppend(ab, " ", 1);
+            len++;
+        }
+    }
+    abAppend(ab, "\x1b[m", 3);
+    abAppend(ab, "\r\n", 2);
+
+}
+
+
+
 void editorRefreshScreen(){
+
     editorScroll();
     struct abuf ab = ABUF_INIT;
 
@@ -83,6 +109,7 @@ void editorRefreshScreen(){
     abAppend(&ab, "\x1b[H", 3);
     
     editorDrawRows(&ab);
+    editorDrawStatusBar(&ab);
     
     char buf[32];
     /* Fix: Logic to update cursor position relative to screen, not file */
@@ -93,4 +120,13 @@ void editorRefreshScreen(){
 
     write(STDOUT_FILENO, ab.b, ab.len);
     abFree(&ab);
+}
+
+
+void editorSetStatusMessage(const char *fmt, ...){
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(E.statusMsg, sizeof(E.statusMsg), fmt, ap);
+    va_end(ap);
+    E.statusMsgTime = time(NULL);
 }

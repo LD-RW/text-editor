@@ -58,10 +58,10 @@ static void editorDrawRows(struct abuf *ab){
                 abAppend(ab, "~", 1);
             }
         } else {
-            int len = E.row[fileRow].size - E.colOff;
+            int len = E.row[fileRow].rSize - E.colOff;
             if(len < 0) len = 0;
             if(len > E.screenCols) len = E.screenCols;
-            abAppend(ab, &E.row[fileRow].chars[E.colOff], len);
+            abAppend(ab, &E.row[fileRow].render[E.colOff], len);
         }
 
         abAppend(ab, "\x1b[K", 3);

@@ -28,7 +28,9 @@
  * @details The CTRL key in a terminal works by stripping the 3 most 
  * significant bits (MSBs) from a character. For example, 'q' (01110001) 
  * becomes Ctrl-Q (00010001). This macro performs a bitwise AND with 0x1F.
- */#define CTRL_KEY(k) ((k) & 0x1f)
+ */
+#define CTRL_KEY(k) ((k) & 0x1f)
+#define TAB_STOP 8  
 
 
 

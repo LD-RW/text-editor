@@ -24,17 +24,21 @@ void abFree(struct abuf *ab){
 
 /*** output operations ***/
 void editorScroll(){
+    E.rx = 0;
+    if(E.cy < E.numRows){
+        E.rx = editorRowCxToRx(&E.row[E.cy], E.cx);
+    }
     if(E.cy < E.rowOff){
         E.rowOff = E.cy;
     }
     if(E.cy >= E.rowOff + E.screenRows){
         E.rowOff = E.cy - E.screenRows + 1;
     }
-    if(E.cx < E.colOff){
-        E.colOff = E.cx;
+    if(E.rx < E.colOff){
+        E.colOff = E.rx;
     }
-    if(E.cx >= E.colOff + E.screenCols){
-        E.colOff = E.cx - E.screenCols + 1;
+    if(E.rx >= E.colOff + E.screenCols){
+        E.colOff = E.rx - E.screenCols + 1;
     }
 }
 
@@ -82,7 +86,7 @@ void editorRefreshScreen(){
     
     char buf[32];
     /* Fix: Logic to update cursor position relative to screen, not file */
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (E.cy - E.rowOff) + 1, (E.cx - E.colOff) + 1);
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (E.cy - E.rowOff) + 1, (E.rx - E.colOff) + 1);
     abAppend(&ab, buf, strlen(buf));
 
     abAppend(&ab, "\x1b[?25h", 6);

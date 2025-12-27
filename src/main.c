@@ -7,6 +7,7 @@ void initEditor(){
     E.cy = 0;
     E.rowOff = 0;
     E.colOff = 0;
+    E.rx = 0;
     E.numRows = 0;
     E.row = NULL;
     if(getWindowSize(&E.screenRows, &E.screenCols) == -1){

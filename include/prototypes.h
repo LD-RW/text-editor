@@ -15,6 +15,7 @@ int getCursorPosition(int *rows, int *cols);
 // row.c
 void editorAppendRow(char *s, size_t len);
 void editorUpdateRow(erow *row);
+int editorRowCxToRx(erow *row, int cx);
 
 // file_io.c
 void editorOpen(char *fileName);

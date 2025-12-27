@@ -30,9 +30,15 @@ void editorScroll(){
     if(E.cy >= E.rowOff + E.screenRows){
         E.rowOff = E.cy - E.screenRows + 1;
     }
+    if(E.cx < E.colOff){
+        E.colOff = E.cx;
+    }
+    if(E.cx >= E.colOff + E.screenCols){
+        E.colOff = E.cx - E.screenCols + 1;
+    }
 }
 
-void editorDrawRows(struct abuf *ab){
+static void editorDrawRows(struct abuf *ab){
     int y;
     for(y = 0; y < E.screenRows; ++y){
         int fileRow = y + E.rowOff;
@@ -52,9 +58,10 @@ void editorDrawRows(struct abuf *ab){
                 abAppend(ab, "~", 1);
             }
         } else {
-            int len = E.row[fileRow].size;
+            int len = E.row[fileRow].size - E.colOff;
+            if(len < 0) len = 0;
             if(len > E.screenCols) len = E.screenCols;
-            abAppend(ab, E.row[fileRow].chars, len);
+            abAppend(ab, &E.row[fileRow].chars[E.colOff], len);
         }
 
         abAppend(ab, "\x1b[K", 3);
@@ -75,7 +82,7 @@ void editorRefreshScreen(){
     
     char buf[32];
     /* Fix: Logic to update cursor position relative to screen, not file */
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (E.cy - E.rowOff) + 1, E.cx + 1);
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (E.cy - E.rowOff) + 1, (E.cx - E.colOff) + 1);
     abAppend(&ab, buf, strlen(buf));
 
     abAppend(&ab, "\x1b[?25h", 6);

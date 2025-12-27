@@ -9,7 +9,6 @@ void editorMoveCursor(int key){
             E.cx--;
         break;
     case ARROW_RIGHT:
-        if(E.cx < E.screenCols - 1)
             E.cx++;
         break;
     case ARROW_UP:

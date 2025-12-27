@@ -3,6 +3,7 @@
 #include "common.h"
 #include "data.h"
 
+// struct abuf;
 // terminal.c
 void die(const char *s);
 void disableRawMode();
@@ -17,7 +18,7 @@ void editorAppendRow(char *s, size_t len);
 // file_io.c
 void editorOpen(char *fileName);
 // output.c
-void editorDrawRows(struct abuf *ab);
+// void editorDrawRows(struct abuf *ab);
 void editorRefreshScreen();
 void editorScroll();
 // input.c

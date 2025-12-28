@@ -36,6 +36,7 @@
  */
 #define CTRL_KEY(k) ((k) & 0x1f)
 #define TAB_STOP 8  
+#define B_QUIT_TIMES 3
 
 
 

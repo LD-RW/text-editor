@@ -21,3 +21,45 @@ void editorOpen(char *fileName){
     free(line);
     fclose(fp);
 }
+
+char *editorRowsToString(int *bufLen){
+    int totalLen = 0;
+    int j;
+    for(j = 0; j < E.numRows; ++j){
+        totalLen += E.row[j].size + 1;
+    }
+    *bufLen = totalLen;
+
+    char *buf = malloc(totalLen);
+    char *p = buf;
+    for(j = 0; j < E.numRows; ++j){
+        memcpy(p, E.row[j].chars, E.row[j].size);
+        p += E.row[j].size;
+        *p = '\n';
+        p++;
+    }
+    return buf;
+}
+
+void editorSave(){
+    if(E.fileName == NULL) return;
+
+    int len;
+    char *buf = editorRowsToString(&len);
+    
+    int fd = open(E.fileName, O_RDWR | O_CREAT, 0644);
+    if(fd != -1){
+        if(ftruncate(fd, len) != -1){
+            if(write(fd, buf, len) == len){
+                close(fd);
+                free(buf);
+                editorSetStatusMessage("%d bytes written to disk", len);
+                return;
+            }
+        }
+        close(fd);
+    }
+    free(buf);
+    editorSetStatusMessage("Can't save! I/O error: %s", strerror(errno));
+
+}

@@ -44,6 +44,11 @@ void editorMoveCursor(int key){
 void editorProcessKeypress(){
     int c = editorReadKey();
     switch(c) {
+        case '\r':
+            /* TO DO */
+            break;
+
+
         case CTRL_KEY('q'):
             write(STDOUT_FILENO, "\x1b[2J", 4);
             write(STDOUT_FILENO, "\x1b[H", 3);
@@ -57,6 +62,14 @@ void editorProcessKeypress(){
                 E.cx = E.row[E.cy].size;
             }
             break;
+
+            case BACKSPACE:
+            case CTRL_KEY('h'):
+            case DEL_KEY:
+                /* To Do */
+                break;
+
+
         case PAGE_UP:
         case PAGE_DOWN:
             {
@@ -76,12 +89,20 @@ void editorProcessKeypress(){
                 }   
             }
             break;
+        case CTRL_KEY('s'):
+            editorSave();
+            break;
         case ARROW_UP:
         case ARROW_LEFT:
         case ARROW_DOWN:
         case ARROW_RIGHT:
             editorMoveCursor(c);
             break;
+
+        case CTRL_KEY('l'):
+        case '\x1b':
+            break;
+        
         default:
             editorInsertChar(c);
             break;

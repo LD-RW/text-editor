@@ -20,6 +20,8 @@ void editorRowInsertChar(erow *row, int at, int c);
 
 // file_io.c
 void editorOpen(char *fileName);
+char *editorRowsToString(int *buflen);
+void editorSave();
 // output.c
 // void editorDrawRows(struct abuf *ab);
 void editorRefreshScreen();

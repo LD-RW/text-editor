@@ -77,7 +77,8 @@ void editorProcessKeypress(){
             case BACKSPACE:
             case CTRL_KEY('h'):
             case DEL_KEY:
-                /* To Do */
+                if(c == DEL_KEY) editorMoveCursor(ARROW_RIGHT);
+                editorDelChar();
                 break;
 
 

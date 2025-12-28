@@ -9,6 +9,7 @@ void initEditor(){
     E.colOff = 0;
     E.rx = 0;
     E.numRows = 0;
+    E.dirty = 0;
     E.row = NULL;
     E.fileName = NULL;
     E.statusMsg[0] = '\0';

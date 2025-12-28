@@ -2,6 +2,7 @@
 #define DATA_H
 
 #include <termios.h>
+#include<common.h>
 
 typedef struct erow {
     int size;

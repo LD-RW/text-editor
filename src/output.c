@@ -98,7 +98,14 @@ void editorDrawStatusBar(struct abuf *ab){
 
 }
 
-
+void editorDrawMessageBar(struct abuf *ab){
+    abAppend(ab, "\x1b[K", 3);
+    int msgLen = strlen(E.statusMsg);
+    if(msgLen > E.screenCols) msgLen = E.screenCols;
+    if(msgLen && time(NULL) - E.statusMsgTime < 5){
+        abAppend(ab, E.statusMsg, msgLen);
+    }
+}
 
 void editorRefreshScreen(){
 
@@ -110,6 +117,7 @@ void editorRefreshScreen(){
     
     editorDrawRows(&ab);
     editorDrawStatusBar(&ab);
+    editorDrawMessageBar(&ab);
     
     char buf[32];
     /* Fix: Logic to update cursor position relative to screen, not file */

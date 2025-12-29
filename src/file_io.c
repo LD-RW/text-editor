@@ -16,7 +16,7 @@ void editorOpen(char *fileName){
             while(lineLen > 0 && (line[lineLen - 1] == '\n' || line[lineLen - 1] == '\r'))
                 lineLen--;
         }
-        editorAppendRow(line, lineLen);
+        editorInsertRow(E.numRows, line, lineLen);
     }
     free(line);
     fclose(fp);

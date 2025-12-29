@@ -48,7 +48,7 @@ void editorProcessKeypress(){
     int c = editorReadKey();
     switch(c) {
         case '\r':
-            /* TO DO */
+            editorInsertNewline();
             break;
 
 

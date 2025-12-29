@@ -13,7 +13,7 @@ int getWindowSize(int *rows, int *cols);
 int getCursorPosition(int *rows, int *cols);
 
 // row.c
-void editorAppendRow(char *s, size_t len);
+void editorInsertRow(int at, char *s, size_t len);
 void editorUpdateRow(erow *row);
 int editorRowCxToRx(erow *row, int cx);
 void editorRowInsertChar(erow *row, int at, int c);
@@ -41,5 +41,6 @@ void initEditor();
 /*** editor operations ***/
 void editorInsertChar(int c);
 void editorDelChar();
+void editorInsertNewline();
 
 #endif

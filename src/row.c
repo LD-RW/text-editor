@@ -39,9 +39,12 @@ void editorUpdateRow(erow *row){
 }
 
 
-void editorAppendRow(char *s, size_t len){
+void editorInsertRow(int at, char *s, size_t len){
+    if(at < 0 || at > E.numRows) return;
+
+
     E.row = realloc(E.row, sizeof(erow) * (E.numRows + 1));
-    int at = E.numRows;
+    memmove(&E.row[at + 1], &E.row[at], sizeof(erow) * (E.numRows - at));
     E.row[at].size = len;
     E.row[at].chars = malloc(len + 1);
     memcpy(E.row[at].chars, s, len);

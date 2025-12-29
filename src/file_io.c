@@ -43,7 +43,13 @@ char *editorRowsToString(int *bufLen){
 }
 
 void editorSave(){
-    if(E.fileName == NULL) return;
+    if(E.fileName == NULL) {
+        E.fileName = editorPrompt("Save as: %s (ESC to cancel)");
+        if(E.fileName == NULL){
+            editorSetStatusMessage("Save aborted");
+            return;
+        }
+    }
 
     int len;
     char *buf = editorRowsToString(&len);

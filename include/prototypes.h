@@ -34,6 +34,7 @@ void editorSetStatusMessage(const char *fmt, ...);
 // input.c
 void editorMoveCursor(int key);
 void editorProcessKeypress();
+char *editorPrompt(char *prompt);
 
 // main.c
 void initEditor();

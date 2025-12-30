@@ -101,6 +101,11 @@ void editorProcessKeypress(){
                 }   
             }
             break;
+
+        case CTRL_KEY('f'):
+            editorFind();
+            break;
+
         case CTRL_KEY('s'):
             editorSave();
             break;
@@ -122,7 +127,7 @@ void editorProcessKeypress(){
     quitTimes = B_QUIT_TIMES;
 }
 
-char *editorPrompt(char *prompt){
+char *editorPrompt(char *prompt, void (*callback)(char *, int)){
     size_t bufSize = 128;
     char *buf = malloc(bufSize);
 
@@ -140,12 +145,14 @@ char *editorPrompt(char *prompt){
         }
         else if(c == '\x1b'){
             editorSetStatusMessage("");
+            if(callback) callback(buf, c);
             free(buf);
             return NULL;
         }
         else if(c == '\r'){
             if(bufLen != 0){
                 editorSetStatusMessage("");
+                if(callback) callback(buf, c);
                 return buf;
             }
         }
@@ -157,5 +164,6 @@ char *editorPrompt(char *prompt){
             buf[bufLen++] = c;
             buf[bufLen] = '\0';
         }
+        if(callback) callback(buf, c);
     }
 }

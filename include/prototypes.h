@@ -21,27 +21,30 @@ void editorRowDelChar(erow *row, int at);
 void editorFreeRow(erow *row);
 void editorDelRow(int at);
 void editorRowAppendString(erow *row, char *s, size_t len);
+int editorRowRxToCx(erow *row, int rx);
 
 // file_io.c
 void editorOpen(char *fileName);
 char *editorRowsToString(int *buflen);
 void editorSave();
 // output.c
-// void editorDrawRows(struct abuf *ab);
 void editorRefreshScreen();
 void editorScroll();
 void editorSetStatusMessage(const char *fmt, ...);
 // input.c
 void editorMoveCursor(int key);
 void editorProcessKeypress();
-char *editorPrompt(char *prompt);
+char *editorPrompt(char *prompt, void (*callback)(char *, int));
 
 // main.c
 void initEditor();
 
-/*** editor operations ***/
+// editor.c
 void editorInsertChar(int c);
 void editorDelChar();
 void editorInsertNewline();
+
+// find.c
+void editorFind();
 
 #endif

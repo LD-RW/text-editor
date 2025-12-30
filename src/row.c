@@ -96,3 +96,19 @@ void editorRowAppendString(erow *row, char *s, size_t len){
     editorUpdateRow(row);
     E.dirty++;
 }
+
+int editorRowRxToCx(erow *row, int rx){
+    int curRx = 0;
+    int cx;
+    for(cx = 0; cx < row -> size; cx++){
+        if(row -> chars[cx] == '\t'){
+            curRx += (TAB_STOP - 1) + (curRx % TAB_STOP);
+        }
+        curRx++;
+        if(curRx > rx){
+            return cx;
+        }
+
+    }
+    return cx;
+}

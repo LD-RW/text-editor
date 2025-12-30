@@ -44,7 +44,7 @@ char *editorRowsToString(int *bufLen){
 
 void editorSave(){
     if(E.fileName == NULL) {
-        E.fileName = editorPrompt("Save as: %s (ESC to cancel)");
+        E.fileName = editorPrompt("Save as: %s (ESC to cancel)", NULL);
         if(E.fileName == NULL){
             editorSetStatusMessage("Save aborted");
             return;

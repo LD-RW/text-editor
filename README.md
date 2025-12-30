@@ -22,7 +22,7 @@ It showcases low-level terminal handling, dynamic memory management, and efficie
 │   ├── row.c
 │   └── terminal.c
 ├── Makefile
-└── README.txt
+└── README.md
 
 ```
 ## 🛠️ Build Instructions
@@ -33,7 +33,8 @@ The project uses a Makefile to automate compilation and manage object files.
 
 Run the following command from the project root:
 
-make
+
+__make__
 
 
 This will:
@@ -45,7 +46,8 @@ This will:
 
 Remove compiled files and reset the build state:
 
-make clean
+
+__make clean__
 
 
 ---

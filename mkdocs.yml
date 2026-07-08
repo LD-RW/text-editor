@@ -1,0 +1,39 @@
+site_name: B-textEditor
+site_description: A modular, terminal-based text editor written in C
+site_url: https://ld-rw.github.io/text-editor/
+repo_url: https://github.com/LD-RW/text-editor
+repo_name: LD-RW/text-editor
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.footer
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - Tutorial: tutorial.md
+  - How-to guides:
+      - Add a keybinding: how-to-add-a-keybinding.md
+  - Reference: reference.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.keys
+  - tables

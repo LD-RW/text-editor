@@ -1,4 +1,7 @@
 # B-textEditor
+## 📚 Documentation
+
+Full documentation — tutorial, how-to guides, and reference — lives at **[ld-rw.github.io/text-editor](https://ld-rw.github.io/text-editor/)**.
 
 B-textEditor is a lightweight, modular, terminal-based text editor written in C, inspired by the Kilo editor.
 It showcases low-level terminal handling, dynamic memory management, and efficient screen rendering using POSIX APIs.
